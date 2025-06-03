@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pillow
+pdfplumber
+python-docx
+pytesseract
+python-multipart
+rapidfuzz
+
+huggingface_hub
