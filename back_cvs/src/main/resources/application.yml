@@ -1,0 +1,42 @@
+server:
+  port: 3015
+
+spring:
+  application:
+    name: back-cvs
+  security:
+    jwt:
+      secret-key: VGhpcyBpcyBhIHZlcnkgc2VjdXJlIHNlY3JldCBrZXkgZm9yIEpXVFMhIQ== # 🔴 Reemplazar en producción con una variable de entorno
+      expiration: 3600000 # 1 hora equivale la secion del usuario
+      refresh-token:
+        expiration: 604800000 # 7 días en milisegundos
+
+    user:
+      name: renzord # usuario-
+      password: 12345
+
+  sql:
+    init:
+      platform: postgres
+
+  datasource:
+    url: jdbc:postgresql://localhost:7075/civia-data # Nombre de la base-de-datos
+    username: postgres # user create use modificar-contraseña entorno a producion
+    password: root # modificar contraseña en enetorno de producion
+  jpa:
+    show-sql: true  # Cambia a 'false' en producción
+    generate-ddl: true
+    database: POSTGRESQL
+    properties:
+      hibernate:
+        format-sql: true
+        ddl-auto: update # Considera cambiar a 'none' o 'validate', 'update', 'create', 'create-drop' en producción
+
+  # Subida de archivos
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+api:
+  prefix: /api/v2
