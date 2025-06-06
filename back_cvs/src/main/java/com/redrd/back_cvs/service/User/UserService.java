@@ -1,10 +1,8 @@
 package com.redrd.back_cvs.service.User;
 
 import com.redrd.back_cvs.Dto.UserDto;
-import com.redrd.back_cvs.enums.RoleUsers;
 import com.redrd.back_cvs.exceptions.AlreadyExistException;
 import com.redrd.back_cvs.exceptions.ResourceNotFoundException;
-import com.redrd.back_cvs.model.DocumentoCv;
 import com.redrd.back_cvs.model.Usuario;
 import com.redrd.back_cvs.repository.UsuarioRepository;
 import com.redrd.back_cvs.request.CreateUserRequest;
@@ -12,13 +10,12 @@ import com.redrd.back_cvs.request.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +23,6 @@ public class UserService implements IUserService{
 
     private final UsuarioRepository usuarioRepository;
     private final ModelMapper modelMapper;
-
 
     @Override
     public Usuario registrar(CreateUserRequest request) {
@@ -47,7 +43,7 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public List<Usuario> listar() {
+    public List<Usuario> listUsers() {
         return usuarioRepository.findAll();
     }
 
@@ -76,5 +72,12 @@ public class UserService implements IUserService{
     @Override
     public UserDto convertUserToDto(Usuario user) {
         return modelMapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public List<UserDto> convertUserToDtoList(List<Usuario> users) {
+        return users.stream()
+                .map(this::convertUserToDto)
+                .collect(Collectors.toList());
     }
 }

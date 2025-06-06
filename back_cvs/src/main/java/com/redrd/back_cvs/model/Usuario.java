@@ -1,5 +1,6 @@
 package com.redrd.back_cvs.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.redrd.back_cvs.enums.RoleUsers;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "usuarios")
 public class Usuario {
 
     @Id
@@ -29,6 +31,10 @@ public class Usuario {
     private String email;
     private String password;
     private String telefono;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private DocumentoCv documentoCv;
 
     @Enumerated(EnumType.STRING)
     private RoleUsers user_rol; // postulante, evaluador, ciudadano

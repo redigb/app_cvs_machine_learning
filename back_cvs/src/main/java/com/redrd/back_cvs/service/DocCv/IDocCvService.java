@@ -9,6 +9,6 @@ import java.util.UUID;
 public interface IDocCvService {
     DocumentoCv subirDocumento(UUID usuarioId, MultipartFile archivo) throws IOException;
     DocumentoCv obtenerDocumentoPorUsuario(UUID usuarioId);
-    void eliminarDocumento(UUID usuarioId);
+    void eliminarDocumento(UUID usuarioId) throws IOException;
     DocumentoCv actualizarDocumento(UUID usuarioId, MultipartFile archivo) throws IOException;
 }

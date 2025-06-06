@@ -16,10 +16,12 @@ import java.util.UUID;
 public interface IUserService {
 
     Usuario registrar(CreateUserRequest usuario);
-    List<Usuario> listar();
+    List<Usuario> listUsers();
     Usuario obtenerPorId(UUID id);
     Usuario updateUser(UserUpdateRequest request, UUID userId);
     void deletUser(UUID userId);
 
     UserDto convertUserToDto(Usuario user);
+
+    List<UserDto> convertUserToDtoList(List<Usuario> users);
 }

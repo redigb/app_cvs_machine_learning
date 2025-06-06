@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: back-cvs
+    directorio-cv: uploads/cv
+
   security:
     jwt:
       secret-key: VGhpcyBpcyBhIHZlcnkgc2VjdXJlIHNlY3JldCBrZXkgZm9yIEpXVFMhIQ== # 🔴 Reemplazar en producción con una variable de entorno
@@ -37,6 +39,8 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+
+  ## falta a{adir ruta para guarda rlos archivos
 
 api:
   prefix: /api/v2
