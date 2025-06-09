@@ -134,8 +134,8 @@ public class PostulacionService implements IPostulacionService {
     }
 
     @Override
-    public List<Postulacion> findByPersonaId(Usuario personaId) {
-        return postulacionRepository.findByUsuarioId(personaId);
+    public List<Postulacion> findByPersonaId(Usuario persona) {
+        return postulacionRepository.findByUsuarioId(persona.getId());
     }
 
     @Override

@@ -22,20 +22,20 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DataInitializer implements ApplicationListener<ApplicationReadyEvent> {
 
-    private final VacanteRepository vacanteRepository; // crear 12 vacantes, Tecnología, Finanzas, Desarrollo Social ->  relacioanda a estas areas.
-    private final UsuarioRepository usuarioRepository; // Crear usuario con el rol "EVALUADOR" solo 2
+    private final VacanteRepository vacanteRepository;
+    private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        crearUsuariosEvaluadores();
-        crearVacantes();
+       // crearUsuariosEvaluadores();
+        //crearVacantes();
     }
 
 
     private void crearVacantes() {
-        String[] areas = {"Tecnología", "Finanzas", "Desarrollo Social"};
+        String[] areas = {"Tecnología", "Finanzas", "Desarrollo Social", "Administración"};
 
         // Requisitos por área
         Map<String, List<String>> requisitosPorArea = Map.of(

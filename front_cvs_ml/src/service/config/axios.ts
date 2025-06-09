@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useAuthStore } from "../store/auth";
+import { log } from "console";
 
 // cambia segun el arranque "dev" // "prod"
 //const isDev = import.meta.env.MODE === "development";
 
-const baseURL =  process.env.NEXT_BACK_API_URL;
+const baseURL =  process.env.NEXT_PUBLIC_API_URL;
 
 // Aotomatic conect - backend with axios
 const authApi = axios.create({

@@ -5,8 +5,10 @@ import com.redrd.back_cvs.dto.DocumentoCvDto;
 import com.redrd.back_cvs.exceptions.AlreadyExistException;
 import com.redrd.back_cvs.exceptions.ResourceNotFoundException;
 import com.redrd.back_cvs.model.DocumentoCv;
+import com.redrd.back_cvs.model.Usuario;
 import com.redrd.back_cvs.response.ApiResponse;
 import com.redrd.back_cvs.service.DocCv.IDocCvService;
+import com.redrd.back_cvs.service.user.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +27,13 @@ import static org.springframework.http.HttpStatus.*;
 public class CvsController {
 
     private final IDocCvService docCvService;
+    private final IUserService userService;
 
     @PostMapping("/upload")
-    public ResponseEntity<ApiResponse> subirCv(@RequestParam UUID usuarioId,
-                                               @RequestParam MultipartFile archivo) {
+    public ResponseEntity<ApiResponse> subirCv(@RequestParam MultipartFile archivo) {
         try {
-            DocumentoCv doc = docCvService.subirDocumento(usuarioId, archivo);
+            Usuario postulante = userService.getAuthemricatedUser();
+            DocumentoCv doc = docCvService.subirDocumento(postulante.getId(), archivo);
             return ResponseEntity.ok(new ApiResponse("Archivo subido exitosamente!", doc));
         } catch (AlreadyExistException e) {
             return ResponseEntity.status(CONFLICT).body(new ApiResponse("CV ya registrado. Usa actualizar.", null));

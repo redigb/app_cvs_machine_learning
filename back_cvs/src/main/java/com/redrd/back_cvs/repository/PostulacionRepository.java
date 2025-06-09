@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PostulacionRepository extends JpaRepository<Postulacion, UUID> {
-    List<Postulacion> findByUsuarioId(Usuario personaId);
 
-    List<Postulacion> findByVacanteId(Vacante vacanteId);
+    List<Postulacion> findByUsuarioId(UUID personaId);
+
+    List<Postulacion> findByVacanteId(Vacante vacante);
 }

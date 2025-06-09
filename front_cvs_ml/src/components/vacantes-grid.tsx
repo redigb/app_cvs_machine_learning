@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -10,63 +10,46 @@ import { MapPin, Calendar, Users, Search, Filter, DollarSign } from "lucide-reac
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 
-const vacantes = [
-  {
-    id: 1,
-    titulo: "Analista de Sistemas",
-    area: "Tecnología",
-    modalidad: "Tiempo completo",
-    ubicacion: "Yau, Perú",
-    fechaLimite: "2024-02-15",
-    vacantes: 2,
-    requisitos: ["Título en Ingeniería de Sistemas", "Experiencia mínima 2 años", "Conocimiento en bases de datos"],
-    salario: "S/. 3,500 - S/. 4,500",
-    estado: "Activa",
-    color: "from-blue-500 to-blue-600",
-  },
-  {
-    id: 2,
-    titulo: "Contador Público",
-    area: "Finanzas",
-    modalidad: "Tiempo completo",
-    ubicacion: "Yau, Perú",
-    fechaLimite: "2024-02-20",
-    vacantes: 1,
-    requisitos: ["CPC habilitado", "Experiencia en sector público", "Conocimiento en SIAF"],
-    salario: "S/. 4,000 - S/. 5,000",
-    estado: "Activa",
-    color: "from-green-500 to-green-600",
-  },
-  {
-    id: 3,
-    titulo: "Asistente Social",
-    area: "Desarrollo Social",
-    modalidad: "Tiempo completo",
-    ubicacion: "Yau, Perú",
-    fechaLimite: "2024-02-25",
-    vacantes: 3,
-    requisitos: ["Título en Trabajo Social", "Experiencia comunitaria", "Habilidades de comunicación"],
-    salario: "S/. 2,800 - S/. 3,500",
-    estado: "Activa",
-    color: "from-purple-500 to-purple-600",
-  },
-]
+// consumo-api
+import { useGlobalStore } from "@/service/store/GlobalState"
+import { Vacante } from "./types/Vacantes"
 
-export function VacantesGrid() {
+interface VacantesGridProps {
+  vacantesData: Vacante[];
+}
+
+export function VacantesGrid({ vacantesData }: VacantesGridProps) {
+
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedArea, setSelectedArea] = useState("all")
   const router = useRouter()
 
-  const filteredVacantes = vacantes.filter((vacante) => {
+  // Filtrar vacantes por búsqueda y área
+  const filteredVacantes = vacantesData.filter((vacante) => {
     const matchesSearch =
       vacante.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      vacante.area.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesArea = selectedArea === "all" || vacante.area === selectedArea
-    return matchesSearch && matchesArea
-  })
+      vacante.area.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesArea = selectedArea === "all" || vacante.area === selectedArea;
+    return matchesSearch && matchesArea;
+  });
 
-  const handlePostular = () => {
-    // Redirigir al login unificado
+  const getGradientByArea = (area: string): string => {
+    switch (area.toLowerCase()) {
+      case "administración":
+        return "from-blue-500 to-blue-600";
+      case "desarrollo social":
+        return "from-green-500 to-green-600";
+      case "tecnología":
+        return "from-purple-500 to-purple-600";
+      default:
+        return "from-gray-500 to-gray-600";
+    }
+  }
+
+  const setSelectedVacanteId = useGlobalStore((state) => state.setSelectedVacanteId);
+  const handlePostular = (IdVacante: string) => {
+    setSelectedVacanteId(IdVacante);
+    // almacenar la vacante - selecionada solo ID
     router.push("/login")
   }
 
@@ -137,13 +120,10 @@ export function VacantesGrid() {
                     <MapPin className="h-4 w-4 mr-3 text-gray-500" />
                     <span className="text-sm text-gray-600 dark:text-gray-300">{vacante.ubicacion}</span>
                   </div>
-                  <div className="flex items-center p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50">
-                    <Calendar className="h-4 w-4 mr-3 text-gray-500" />
-                    <span className="text-sm text-gray-600 dark:text-gray-300">Hasta: {vacante.fechaLimite}</span>
-                  </div>
+
                   <div className="flex items-center p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50">
                     <Users className="h-4 w-4 mr-3 text-gray-500" />
-                    <span className="text-sm text-gray-600 dark:text-gray-300">{vacante.vacantes} vacante(s)</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">{vacante.puestos} vacante(s)</span>
                   </div>
                 </div>
               </CardHeader>
@@ -179,9 +159,9 @@ export function VacantesGrid() {
 
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Button
-                    className={`w-full bg-gradient-to-r ${vacante.color} hover:opacity-90 text-white shadow-lg hover:shadow-xl transition-all duration-300`}
+                    className={`w-full bg-gradient-to-r ${getGradientByArea(vacante.area)} hover:opacity-90 text-white shadow-lg hover:shadow-xl transition-all duration-300`}
                     size="lg"
-                    onClick={handlePostular}
+                    onClick={() => handlePostular(vacante.id)}
                   >
                     Postular ahora
                   </Button>
@@ -206,3 +186,5 @@ export function VacantesGrid() {
     </div>
   )
 }
+
+

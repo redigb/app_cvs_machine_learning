@@ -1,11 +1,18 @@
 "use client"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Moon, Sun, User } from "lucide-react"
 import { useTheme } from "next-themes"
 
 export function Header() {
   const { theme, setTheme } = useTheme()
+
+  // Validar-ruta
+  const pathname = usePathname();
+  const isActive = (href: string) => pathname === href;
+
+  // añadir icono de usuario
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-xl border-b border-gray-100/50 dark:bg-slate-900/90 dark:border-slate-800/50">
@@ -25,31 +32,39 @@ export function Header() {
               </div>
             </div>
           </Link>
-
           {/* Navegación horizontal mejorada */}
           <nav className="flex items-center space-x-10">
-            <Link
-              href="/"
-              className="relative text-black dark:text-white font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-300 group"
+            <Link href="/"
+              className={`relative font-medium transition-all duration-300 group ${isActive("/")
+                  ? "text-black dark:text-white"
+                  : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                }`}
             >
               Inicio
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black dark:bg-white transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link
-              href="/postulacion/vacantes"
-              className="relative text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-300 group"
+            <Link href="/postulacion/vacantes"
+              className={`relative font-medium transition-all duration-300 group ${isActive("/postulacion/vacantes")
+                  ? "text-black dark:text-white"
+                  : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                }`}
             >
               Vacantes
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black dark:bg-white transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link
-              href="/tramites"
-              className="relative text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-300 group"
+
+            <Link href="/#"
+              className={`relative font-medium transition-all duration-300 group ${isActive("/tramites")
+                  ? "text-black dark:text-white"
+                  : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                }`}
             >
               Trámites
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black dark:bg-white transition-all duration-300 group-hover:w-full"></span>
+              <span
+                className={`absolute -bottom-1 left-0 h-0.5 bg-black dark:bg-white transition-all duration-300 ${isActive("/tramites") ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+              ></span>
             </Link>
-
 
             {/* <Link
               href="/seguimiento"
@@ -86,7 +101,7 @@ export function Header() {
             >
               <Link href="/login">
                 <User className="h-4 w-4 mr-2" />
-                Acceso Ciudadano
+                Iniciar secion
               </Link>
             </Button>
           </div>

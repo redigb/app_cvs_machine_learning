@@ -16,9 +16,12 @@ import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 
 export function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  // Login Form
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // register form
   const [nombre, setNombre] = useState("")
   const [apellido, setApellido] = useState("")
   const [dni, setDni] = useState("")
@@ -62,6 +65,7 @@ export function LoginForm() {
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
       <Card className="border-0 shadow-2xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
         <Tabs defaultValue="login" className="w-full">
+          {/* Cabecera */}
           <CardHeader className="text-center pb-2">
             <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-gradient-to-r from-purple-500 to-purple-600">
               <User className="h-8 w-8 text-white" />
@@ -122,7 +126,7 @@ export function LoginForm() {
                   </div>
                 </div>
 
-                {/* Selector de tipo de usuario en login también */}
+                {/* Selector de tipo de usuario en login también
                 <div className="space-y-4">
                   <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de usuario</Label>
                   <RadioGroup value={tipoUsuario} onValueChange={setTipoUsuario} className="grid grid-cols-1 gap-4">
@@ -174,7 +178,7 @@ export function LoginForm() {
                       </Label>
                     </motion.div>
                   </RadioGroup>
-                </div>
+                </div> */}
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
@@ -184,7 +188,7 @@ export function LoginForm() {
                     </Label>
                   </div>
                   <Link
-                    href="/recuperar-password"
+                    href=""
                     className="text-sm text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300"
                   >
                     ¿Olvidaste tu contraseña?
@@ -387,7 +391,7 @@ export function LoginForm() {
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Al acceder, aceptas nuestra{" "}
                 <Link
-                  href="/privacidad"
+                  href="#"
                   className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300"
                 >
                   Política de Privacidad

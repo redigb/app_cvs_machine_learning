@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 // Types
-import { State, Actions } from './typesAuth';
+import { State, Actions } from '../types/typesAuth';
 
 export const useAuthStore = create(persist<State & Actions>((set) => ({
     token: "",

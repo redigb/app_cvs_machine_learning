@@ -1,9 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { ArrowRight, Briefcase, FileText, Shield } from "lucide-react"
+import { CardContent } from "@/components/ui/card"
+import { Briefcase, FileText } from "lucide-react"
 import { motion } from "framer-motion"
 import { ButtonGlowEffect } from "./mi_ui/ButtonGlowEffect"
 
@@ -128,11 +127,12 @@ export function Hero() {
                                     px-6 py-7 text-lg font-semibold rounded-2xl 
                                     shadow-[0_0_20px_rgba(148,163,184,0.6)]
                                     transition-all duration-300 ease-in-out hover:scale-105"
+                                    disabled
                                 >
                                     <Link href="/postulacion/vacantes" className="w-full flex justify-center items-center">
                                         <span className="flex items-center">
-                                            Comenzar Proceso
-                                            <ArrowRight className="h-5 w-5 ml-3 transition-transform duration-300 group-hover:translate-x-1" />
+                                            Tramitar sus documentos.
+                                            <FileText className="h-5 w-5 ml-3 transition-transform duration-300 group-hover:translate-x-1" />
                                         </span>
                                     </Link>
                                 </ButtonGlowEffect>
@@ -150,8 +150,8 @@ export function Hero() {
                                 >
                                     <Link href="/postulacion/vacantes" className="w-full flex justify-center items-center">
                                         <span className="flex items-center">
-                                            Comenzar Proceso
-                                            <ArrowRight className="h-5 w-5 ml-3 transition-transform duration-300 group-hover:translate-x-1" />
+                                            Postular para una vacante
+                                            <Briefcase className="h-5 w-5 ml-3 transition-transform duration-300 group-hover:translate-x-1" />
                                         </span>
                                     </Link>
                                 </ButtonGlowEffect>

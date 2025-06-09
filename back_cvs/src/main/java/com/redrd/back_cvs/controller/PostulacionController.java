@@ -38,11 +38,13 @@ public class PostulacionController {
             Vacante vacante = vacanteService.obtnerVacanteId(vacanteId);
             // Ya se obtiene la secion via autenticacion del usario
             Usuario postulante = userService.getAuthemricatedUser();
+            // falta validar que el usuario tenga un cv registrado
             // ✅ Validación: el postulante ya tiene una postulación para esta vacante
             boolean yaPostulado = postulacionService
-                    .findByPersonaId(postulante)
+                    .findByPersonaId(postulante) // ✅ corregido
                     .stream()
                     .anyMatch(p -> p.getVacante().getId().equals(vacanteId));
+
             if (yaPostulado) {
                 return ResponseEntity
                         .status(BAD_REQUEST)

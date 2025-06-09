@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/footer"
 import { VacantesGrid } from "@/components/vacantes-grid"
@@ -7,7 +8,25 @@ import { Card, CardContent } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { Briefcase, Users, TrendingUp } from "lucide-react"
 
+// consumo-api
+import { listVacantes } from "@/service/VacantesService"
+import { Vacante } from "@/components/types/Vacantes"
+
 export default function VacantesPage() {
+
+  const [vacantes, setVacantes] = useState<Vacante[]>([]);
+  useEffect(() => {
+    async function fetchVacantes() {
+      try {
+        const data = await listVacantes();
+        setVacantes(data);
+      } catch (error) {
+        console.error("Error cargando vacantes:", error);
+      }
+    }
+    fetchVacantes();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
@@ -57,23 +76,8 @@ export default function VacantesPage() {
                       <Card className="border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
                         <CardContent className="p-4 text-center">
                           <Briefcase className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
-                          <div className="text-2xl font-bold text-green-700 dark:text-green-400">12</div>
+                          <div className="text-2xl font-bold text-green-700 dark:text-green-400">{vacantes.length}</div>
                           <div className="text-sm text-green-600 dark:text-green-500">Vacantes Activas</div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.8 }}
-                    >
-                      <Card className="border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
-                        <CardContent className="p-4 text-center">
-                          <Users className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-                          <div className="text-2xl font-bold text-blue-700 dark:text-blue-400">247</div>
-                          <div className="text-sm text-blue-600 dark:text-blue-500">Postulantes</div>
                         </CardContent>
                       </Card>
                     </motion.div>
@@ -98,7 +102,7 @@ export default function VacantesPage() {
             </Card>
           </motion.div>
 
-          <VacantesGrid />
+          <VacantesGrid vacantesData={vacantes} />
         </div>
       </main>
       <Footer />

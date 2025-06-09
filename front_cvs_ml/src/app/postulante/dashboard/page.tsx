@@ -36,7 +36,7 @@ export default function CiudadanoDashboardPage() {
     const [activeTab, setActiveTab] = useState("tramites")
 
     const client = useRef<Client | null>(null);
-    const userId = "ce56d0c4-ed50-4577-aa4f-e5f403231752";
+    const userId = "9e6d434c-8d6d-4f79-8198-cc28c7f3830d";
     useEffect(() => {
         const socket = new SockJS("http://localhost:3015/ws");
 
