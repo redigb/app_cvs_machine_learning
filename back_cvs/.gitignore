@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+### uploads-spring-create-default store ###
+/uploads

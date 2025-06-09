@@ -1,7 +1,7 @@
 package com.redrd.back_cvs.controller;
 
 
-import com.redrd.back_cvs.Dto.DocumentoCvDto;
+import com.redrd.back_cvs.dto.DocumentoCvDto;
 import com.redrd.back_cvs.exceptions.AlreadyExistException;
 import com.redrd.back_cvs.exceptions.ResourceNotFoundException;
 import com.redrd.back_cvs.model.DocumentoCv;
@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.*;
@@ -46,7 +45,7 @@ public class CvsController {
     public ResponseEntity<ApiResponse> obtenerCv(@PathVariable UUID usuarioId, HttpServletRequest request) {
         try {
             DocumentoCv doc = docCvService.obtenerDocumentoPorUsuario(usuarioId);
-
+            // Crear ruta visualizacion publica para ver el CV.
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
             String archivoNombre = Paths.get(doc.getArchivoUrl()).getFileName().toString();
             String urlPublica = baseUrl + "/cv/" + archivoNombre;

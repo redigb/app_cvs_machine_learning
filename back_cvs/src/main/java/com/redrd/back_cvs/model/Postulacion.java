@@ -1,10 +1,9 @@
 package com.redrd.back_cvs.model;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.redrd.back_cvs.enums.EstadoPeticion;
+import com.redrd.back_cvs.enums.EstadoPostulacion;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,13 +26,26 @@ public class Postulacion {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    private UUID personaId;
-    private UUID vacanteId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
-    private String estadoIa; // en_revision, observado, aprobado
-    private String estadoFinal; // pendiente, aprobado, rechazado
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "vacante_id", nullable = false)
+    private Vacante vacante;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_peticion")
+    private EstadoPeticion estadoPeticion;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_postulacion")
+    private EstadoPostulacion estadoPostulacion;
+
+    @Column(name = "observacion_ia", columnDefinition = "TEXT")
     private String observacionIa;
-    private LocalDateTime enviadoEl;
 
+    @Column(name = "enviado_el")
+    private LocalDateTime enviadoEl;
 }
+

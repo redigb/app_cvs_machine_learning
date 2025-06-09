@@ -1,4 +1,4 @@
-package com.redrd.back_cvs.Dto;
+package com.redrd.back_cvs.dto;
 
 
 import lombok.AllArgsConstructor;

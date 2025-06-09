@@ -1,14 +1,18 @@
-package com.redrd.back_cvs.service.User;
+package com.redrd.back_cvs.service.user;
 
-import com.redrd.back_cvs.Dto.UserDto;
+import com.redrd.back_cvs.dto.UserDto;
 import com.redrd.back_cvs.exceptions.AlreadyExistException;
 import com.redrd.back_cvs.exceptions.ResourceNotFoundException;
 import com.redrd.back_cvs.model.Usuario;
 import com.redrd.back_cvs.repository.UsuarioRepository;
 import com.redrd.back_cvs.request.CreateUserRequest;
+import com.redrd.back_cvs.request.LoginRequest;
 import com.redrd.back_cvs.request.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +27,7 @@ public class UserService implements IUserService{
 
     private final UsuarioRepository usuarioRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Usuario registrar(CreateUserRequest request) {
@@ -31,8 +36,7 @@ public class UserService implements IUserService{
                 .map(req -> {
                     Usuario user = new Usuario();
                     user.setEmail(req.getEmail());
-                    //ser.setPassword(passwordEncoder.encode(request.getPassword()));
-                    user.setPassword(req.getPassword());
+                    user.setPassword(passwordEncoder.encode(request.getPassword()));
                     user.setName(request.getName());
                     user.setTelefono(req.getTelefono());
                     user.setCreatedAt(LocalDateTime.now());
@@ -40,6 +44,11 @@ public class UserService implements IUserService{
                     return usuarioRepository.save(user);
                 }).orElseThrow(
                         () -> new AlreadyExistException("Oops!" + request.getEmail()+" el usuario ya existe!"));
+    }
+
+    @Override
+    public Usuario accesUser(LoginRequest login) {
+        return null;
     }
 
     @Override
@@ -79,5 +88,12 @@ public class UserService implements IUserService{
         return users.stream()
                 .map(this::convertUserToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Usuario getAuthemricatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return usuarioRepository.findByEmail(email);
     }
 }

@@ -1,9 +1,8 @@
-package com.redrd.back_cvs.Dto;
+package com.redrd.back_cvs.dto;
 
 import com.redrd.back_cvs.enums.RoleUsers;
 import lombok.Data;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data

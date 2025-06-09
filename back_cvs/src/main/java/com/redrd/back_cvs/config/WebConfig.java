@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    // Para RUTAS DE archivos_mas libres
     @Value("${spring.application.directorio-cv}")
     private String directorioCv;
 

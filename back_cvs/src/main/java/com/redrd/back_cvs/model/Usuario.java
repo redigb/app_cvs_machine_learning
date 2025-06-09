@@ -1,6 +1,7 @@
 package com.redrd.back_cvs.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.redrd.back_cvs.enums.RoleUsers;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -29,8 +32,10 @@ public class Usuario {
 
     private String name;
     private String email;
-    private String password;
     private String telefono;
+
+    @JsonIgnore
+    private String password;
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
@@ -41,4 +46,7 @@ public class Usuario {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Postulacion> postulaciones = new ArrayList<>();
 }

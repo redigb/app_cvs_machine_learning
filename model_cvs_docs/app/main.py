@@ -83,20 +83,20 @@ def generar_observaciones_dinamicas_model(requisitos, texto_cv):
     )
 
     promptLLama = (
-    "Eres un evaluador experto de currículums en español. A continuación se muestra el texto extraído de un CV y una lista de requisitos para un puesto.\n\n"
-    f"Fecha actual: {fecha_actual}\n\n"
-    f"Texto del CV:\n\"\"\"\n{texto_cv}\n\"\"\"\n\n"
-    f"Requisitos:\n{json.dumps(requisitos, ensure_ascii=False)}\n\n"
-    "Tu tarea es analizar si el texto del CV cumple con los requisitos indicados. Usa como referencia la fecha actual para estimar si el postulante tiene suficiente experiencia laboral.\n\n"
-    "- Si un requisito pide una experiencia mínima en años, debes sumar toda la experiencia laboral relevante, aunque provenga de diferentes trabajos o prácticas.\n"
-    "- Considera como inicio laboral el año de la primera experiencia relevante (aunque sea una práctica, si tiene funciones relacionadas).\n"
-    "- Usa la fecha actual como referencia para calcular correctamente la duración.\n\n"
-    "Devuelve exclusivamente lo siguiente:\n"
-    "- Si todos los requisitos se cumplen, responde solo con la palabra 'aprobado' en una línea aparte.\n"
-    "- Si alguno no se cumple, devuelve una línea por cada requisito incumplido con el formato: [Requisito]: Observación breve en español.\n"
-    "- La última línea debe contener solo una palabra que indique el estado: 'observado' o 'rechazado'.\n\n"
-    "No pienses en voz alta, no expliques nada, no escribas en inglés, no agregues nada más."
-)
+        "Eres un evaluador experto de currículums en español. A continuación se muestra el texto extraído de un CV y una lista de requisitos para un puesto.\n\n"
+        f"Fecha actual: {fecha_actual}\n\n"
+        f"Texto del CV:\n\"\"\"\n{texto_cv}\n\"\"\"\n\n"
+        f"Requisitos:\n{json.dumps(requisitos, ensure_ascii=False)}\n\n"
+        "Tu tarea es analizar si el texto del CV cumple con los requisitos indicados. Usa como referencia la fecha actual para estimar si el postulante tiene suficiente experiencia laboral.\n\n"
+        "- Si un requisito pide una experiencia mínima en años, debes sumar toda la experiencia laboral relevante, aunque provenga de diferentes trabajos o prácticas.\n"
+        "- Considera como inicio laboral el año de la primera experiencia relevante (aunque sea una práctica, si tiene funciones relacionadas).\n"
+        "- Usa la fecha actual como referencia para calcular correctamente la duración.\n\n"
+        "Devuelve exclusivamente lo siguiente:\n"
+        "- Si todos los requisitos se cumplen, responde solo con la palabra 'aprobado' en una línea aparte.\n"
+        "- Si alguno no se cumple, devuelve una línea por cada requisito incumplido con el formato: [Requisito]: Observación breve en español.\n"
+        "- La última línea debe contener solo una palabra que indique el estado: 'observado' o 'rechazado'.\n\n"
+        "No pienses en voz alta, no expliques nada, no escribas en inglés, no agregues nada más."
+    )
     
     try:
         completion = client.chat.completions.create(

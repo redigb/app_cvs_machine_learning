@@ -1,10 +1,11 @@
 package com.redrd.back_cvs.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
+@Getter
+@Setter
 @AllArgsConstructor
-@Data
+@NoArgsConstructor
 public class ApiResponse {
     private String message;
     private Object data;

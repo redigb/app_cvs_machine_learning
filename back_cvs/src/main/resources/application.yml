@@ -23,16 +23,18 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:7075/civia-data # Nombre de la base-de-datos
-    username: postgres # user create use modificar-contraseña entorno a producion
-    password: root # modificar contraseña en enetorno de producion
+    username: renzo_rd77 # user create use modificar-contraseña entorno a producion
+    password: admin77 # modificar contraseña en enetorno de producion
+    driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true  # Cambia a 'false' en producción
     generate-ddl: true
     database: POSTGRESQL
-    properties:
-      hibernate:
-        format-sql: true
-        ddl-auto: update # Considera cambiar a 'none' o 'validate', 'update', 'create', 'create-drop' en producción
+    hibernate:
+      format-sql: true
+      ddl-auto: update # Considera cambiar a 'none' o 'validate', 'update', 'create', 'create-drop' en producción
+    #properties:
+
 
   # Subida de archivos
   servlet:

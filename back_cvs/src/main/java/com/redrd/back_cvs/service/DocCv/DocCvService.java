@@ -62,8 +62,10 @@ public class DocCvService implements IDocCvService{
 
     @Override
     public DocumentoCv obtenerDocumentoPorUsuario(UUID usuarioId) {
+        Usuario userDoc = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no existente"));;
         return docCvRepository.findByUsuarioId(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("CV no encontrado para el usuario " + usuarioId));
+                .orElseThrow(() -> new ResourceNotFoundException("CV no encontrado para el usuario " + userDoc.getEmail()));
     }
 
     @Override
