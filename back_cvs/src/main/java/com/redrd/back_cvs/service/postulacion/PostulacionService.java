@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -146,5 +147,12 @@ public class PostulacionService implements IPostulacionService {
     @Override
     public PostulacionDTO converPostulacionDto(Postulacion postulacion) {
         return modelMapper.map(postulacion, PostulacionDTO.class);
+    }
+
+    @Override
+    public List<PostulacionDTO> convertPostulacionDtoList(List<Postulacion> postulaciones) {
+        return postulaciones.stream()
+                .map(this::converPostulacionDto) // Esto produce PostulacionDTO
+                .collect(Collectors.toList());    // Esto recolecta List<PostulacionDTO>
     }
 }

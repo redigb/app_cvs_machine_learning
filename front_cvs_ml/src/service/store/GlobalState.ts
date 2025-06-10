@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 // Interface
-import { GlobalState } from '../types/GlobalStateType';
+import { GlobalState } from '../types/globalStateType';
 
 
 export const useGlobalStore = create<GlobalState>()(

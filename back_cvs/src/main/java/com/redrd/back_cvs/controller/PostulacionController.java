@@ -7,6 +7,7 @@ import com.redrd.back_cvs.model.Postulacion;
 import com.redrd.back_cvs.model.Usuario;
 import com.redrd.back_cvs.model.Vacante;
 import com.redrd.back_cvs.response.ApiResponse;
+import com.redrd.back_cvs.service.DocCv.IDocCvService;
 import com.redrd.back_cvs.service.postulacion.IPostulacionService;
 import com.redrd.back_cvs.service.user.IUserService;
 import com.redrd.back_cvs.service.vacante.IVacanteService;
@@ -29,8 +30,8 @@ public class PostulacionController {
     private final IPostulacionService postulacionService;
     private final IUserService userService;
     private final IVacanteService vacanteService;
+    private final IDocCvService docCvService;
 
-    // si no existiera el rol de usario esto se rompe :/
     @PreAuthorize("hasRole('ROLE_POSTULANTE')")
     @PostMapping("/evaluar")
     public ResponseEntity<ApiResponse> evaluarPostulacion(@RequestParam UUID vacanteId){
@@ -38,13 +39,12 @@ public class PostulacionController {
             Vacante vacante = vacanteService.obtnerVacanteId(vacanteId);
             // Ya se obtiene la secion via autenticacion del usario
             Usuario postulante = userService.getAuthemricatedUser();
-            // falta validar que el usuario tenga un cv registrado
+            docCvService.obtenerDocumentoPorUsuario(postulante.getId()); // validar si el usario tiene un cv registrado
             // ✅ Validación: el postulante ya tiene una postulación para esta vacante
             boolean yaPostulado = postulacionService
                     .findByPersonaId(postulante) // ✅ corregido
                     .stream()
                     .anyMatch(p -> p.getVacante().getId().equals(vacanteId));
-
             if (yaPostulado) {
                 return ResponseEntity
                         .status(BAD_REQUEST)
@@ -68,10 +68,13 @@ public class PostulacionController {
         return ResponseEntity.ok(new ApiResponse("Éxito", postulacion));
     }
 
-    @GetMapping("/persona/{personaId}")
-    public ResponseEntity<ApiResponse> obtenerPorPersona(@PathVariable Usuario postulanteId) {
-        List<Postulacion> postulaciones = postulacionService.findByPersonaId(postulanteId);
-        return ResponseEntity.ok(new ApiResponse("Succes", postulaciones));
+    @GetMapping("/persona")
+    public ResponseEntity<ApiResponse> obtenerPorPersona() {
+        Usuario postulante = userService.getAuthemricatedUser();
+        List<Postulacion> postulaciones = postulacionService.findByPersonaId(postulante);
+        List<PostulacionDTO> postulacionDTOS = postulacionService.convertPostulacionDtoList(postulaciones);
+        return ResponseEntity.ok(new ApiResponse("Succes", postulacionDTOS));
+
     }
 
     @GetMapping("/vacante/{vacanteId}")

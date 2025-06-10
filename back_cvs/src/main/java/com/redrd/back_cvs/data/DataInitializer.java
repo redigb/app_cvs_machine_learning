@@ -29,8 +29,8 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-       // crearUsuariosEvaluadores();
-        //crearVacantes();
+       //crearUsuariosEvaluadores();
+       //crearVacantes();
     }
 
 
@@ -53,6 +53,11 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
                         "Experiencia en trabajo comunitario",
                         "Capacidad de liderazgo",
                         "Conocimiento en políticas sociales"
+                ),
+                "Administración", List.of(
+                        "Conocimiento en gestión administrativa",
+                        "Dominio de herramientas ofimáticas (Word, Excel, PowerPoint)",
+                        "Experiencia en elaboración de informes y reportes"
                 )
         );
 

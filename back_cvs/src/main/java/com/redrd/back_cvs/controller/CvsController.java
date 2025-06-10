@@ -12,6 +12,7 @@ import com.redrd.back_cvs.service.user.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @RestController
+@PreAuthorize("hasRole('ROLE_POSTULANTE')")
 @RequestMapping("${api.prefix}/doc-cv")
 public class CvsController {
 
@@ -44,10 +46,12 @@ public class CvsController {
         }
     }
 
-    @GetMapping("/view/{usuarioId}/cv")
-    public ResponseEntity<ApiResponse> obtenerCv(@PathVariable UUID usuarioId, HttpServletRequest request) {
+    // corregir para validar solo con el token cuando se envie
+    @GetMapping("/view/cv")
+    public ResponseEntity<ApiResponse> obtenerCv(HttpServletRequest request) {
         try {
-            DocumentoCv doc = docCvService.obtenerDocumentoPorUsuario(usuarioId);
+            Usuario postulanteCv = userService.getAuthemricatedUser();
+            DocumentoCv doc = docCvService.obtenerDocumentoPorUsuario(postulanteCv.getId());
             // Crear ruta visualizacion publica para ver el CV.
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
             String archivoNombre = Paths.get(doc.getArchivoUrl()).getFileName().toString();

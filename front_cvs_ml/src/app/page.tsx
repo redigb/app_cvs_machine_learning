@@ -3,7 +3,7 @@
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/hero";
-import { HowItWorks } from "@/components/how-it-works";
+import { HowItWorks } from "@/components/vacantes-postuladas";
 
 
 export default function Home() {

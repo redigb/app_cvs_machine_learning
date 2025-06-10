@@ -63,6 +63,12 @@ public class UserService implements IUserService{
     }
 
     @Override
+    public Usuario obtnerPorEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario con el email no registrado: " + email));
+    }
+
+    @Override
     public Usuario updateUser(UserUpdateRequest request, UUID userId){
         return usuarioRepository.findById(userId).map(existingUser -> {
             existingUser.setName(request.getName());
@@ -94,6 +100,6 @@ public class UserService implements IUserService{
     public Usuario getAuthemricatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        return usuarioRepository.findByEmail(email);
+        return obtnerPorEmail(email);
     }
 }

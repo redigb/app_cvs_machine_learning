@@ -31,12 +31,31 @@ import { Client } from '@stomp/stompjs';
 import { toast } from 'sonner';
 import { Toaster } from "@/components/ui/sonner"
 
+// user Data -api
+import { listPostulaciones } from "@/service/PostulacionService"
+import { useAuthStore } from "@/service/store/auth"
+import { PostulacionDTO } from "@/components/types/postualcionUser"
+
+
+// Interfaz para la estructura de la respuesta del backend
+interface BackendResponse {
+    message: string;
+    data: PostulacionDTO[]; // El array de postulaciones está dentro de 'data'
+}
 
 export default function CiudadanoDashboardPage() {
+    const profile = useAuthStore((state) => state.profile);
     const [activeTab, setActiveTab] = useState("tramites")
 
     const client = useRef<Client | null>(null);
-    const userId = "9e6d434c-8d6d-4f79-8198-cc28c7f3830d";
+    const userId = profile.id;
+
+    const [postulaciones, setPostulaciones] = useState<PostulacionDTO[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+
+    // WebSocket (Tu código existente)
     useEffect(() => {
         const socket = new SockJS("http://localhost:3015/ws");
 
@@ -45,12 +64,14 @@ export default function CiudadanoDashboardPage() {
             debug: (str) => console.log("WS: ", str),
             onConnect: () => {
                 console.log("✅ Conectado al WebSocket");
-
                 client.current?.subscribe(`/topic/postulacion/${userId}`, (message) => {
                     const data = JSON.parse(message.body);
                     console.log("🔔 Notificación:", data);
-                    toast("s🔔 Notificación: Su fue revisado")
-                    // Aquí puedes mostrar toast, actualizar estado, etc.
+                    toast("🔔 Notificación: Su CV fue revisado por nuestro agente");
+                    // Opcional: Si recibes una actualización de una postulación, puedes actualizarla en el estado 'postulaciones'
+                    // setPostulaciones(prev => prev.map(p => p.id === data.id ? data : p));
+                    // O, para mayor simplicidad, recargar todas las postulaciones:
+                    fetchPostulaciones();
                 });
             },
             onStompError: (frame) => {
@@ -64,13 +85,71 @@ export default function CiudadanoDashboardPage() {
         return () => {
             client.current?.deactivate();
         };
-    }, []);
+    }, [userId]); // Agregamos userId como dependencia para reconectar si cambia
+
+
+
+    // Función para cargar las postulaciones
+    const fetchPostulaciones = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const data = await listPostulaciones();
+            setPostulaciones(data);
+        } catch (err) {
+            console.error("Failed to fetch postulaciones:", err);
+            setError("No se pudieron cargar las postulaciones. Intenta de nuevo.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Cargar postulaciones cuando el componente se monte o el userId esté disponible
+    useEffect(() => {
+        if (userId) {
+            fetchPostulaciones();
+        }
+    }, [userId]); // Dependencia del userId
+
+    // Función auxiliar para obtener el color de la Badge según el estado
+    const getBadgeClassNames = (estado: string) => {
+        switch (estado.toUpperCase()) {
+            case "PENDIENTE":
+                return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+            case "EN_PROCESO": // Si tienes este estado
+            case "OBSERVADO":
+                return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+            case "APROBADO":
+                return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
+            case "RECHAZADO":
+            case "NO_SELECCIONADO":
+                return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+            default:
+                return "bg-gray-100 text-gray-700 dark:bg-gray-700/30 dark:text-gray-300";
+        }
+    };
+
+    // Función para formatear la fecha
+    const formatDate = (dateString: string) => {
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-PE', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        } catch (e) {
+            console.error("Error formatting date:", dateString, e);
+            return dateString; // Devuelve la cadena original si hay error
+        }
+    };
+
+
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             <Header />
             <main className="py-12">
-                 <Toaster />
                 <div className="container mx-auto px-8 lg:px-16">
                     {/* Cabecera del Dashboard */}
                     <motion.div
@@ -83,30 +162,8 @@ export default function CiudadanoDashboardPage() {
                             <CardContent className="p-8">
                                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                                     <div className="space-y-2">
-                                        <h1 className="text-3xl font-bold">Bienvenido, Juan Pérez</h1>
-                                        <p className="text-purple-200">Panel de postulante - Gestiona tus aplicaciones laborales</p>
-                                    </div>
-                                    <div className="flex items-center space-x-4">
-                                        <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
-                                            <Bell className="h-6 w-6" />
-                                        </div>
-                                        <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
-                                            <User className="h-6 w-6" />
-                                        </div>
-                                        <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
-                                            <Settings className="h-6 w-6" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="border-0 shadow-2xl bg-gradient-to-r from-blue-600 to-blue-700 text-white mt-7">
-                            <CardContent className="p-8">
-                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                                    <div className="space-y-2">
-                                        <h1 className="text-3xl font-bold">Bienvenido, Juan Pérez</h1>
-                                        <p className="text-purple-200">Panel de postulante - Gestiona tus aplicaciones laborales</p>
+                                        <h1 className="text-3xl font-bold">Bienvenido, {profile.name}</h1>
+                                        <p className="text-purple-200">Panel de postulante - Gestion de tus aplicaciones laborales</p>
                                     </div>
                                     <div className="flex items-center space-x-4">
                                         <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
@@ -218,122 +275,73 @@ export default function CiudadanoDashboardPage() {
                                         </div>
 
                                         <div className="space-y-4">
-                                            <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
-                                                <Card className="border border-gray-200 dark:border-gray-700">
-                                                    <CardContent className="p-6">
-                                                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                                            <div className="space-y-2">
-                                                                <div className="flex items-center space-x-3">
-                                                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                                                                        Analista de Sistemas
-                                                                    </h3>
-                                                                    <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                                                                        En evaluación
-                                                                    </Badge>
+                                            {isLoading ? (
+                                                <p className="text-center text-gray-600 dark:text-gray-300">Cargando postulaciones...</p>
+                                            ) : error ? (
+                                                <p className="text-center text-red-500">{error}</p>
+                                            ) : postulaciones.length === 0 ? (
+                                                <p className="text-center text-gray-600 dark:text-gray-300">No tienes postulaciones aún.</p>
+                                            ) : (
+                                                postulaciones.map((postulacion) => (
+                                                    <motion.div
+                                                        key={postulacion.id}
+                                                        whileHover={{ y: -5 }}
+                                                        transition={{ type: "spring", stiffness: 300 }}
+                                                    >
+                                                        <Card className="border border-gray-200 dark:border-gray-700">
+                                                            <CardContent className="p-6">
+                                                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                                                    <div className="space-y-2">
+                                                                        <div className="flex items-center space-x-3">
+                                                                            {/* Título de la Vacante (No está en PostulacionDTO directamente, lo obtendrás si mapeas la Vacante también) */}
+                                                                            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                                                                                {/* Aquí podrías mostrar el título de la vacante, si el backend te lo envía junto con la postulación.
+                                                                        Por ahora, un placeholder o "Vacante ID: {postulacion.vacanteId}" */}
+                                                                                Vacante ID: {postulacion.vacanteId.substring(0, 8)}...
+                                                                            </h3>
+                                                                            <Badge className={getBadgeClassNames(postulacion.estadoPostulacion)}>
+                                                                                {postulacion.estadoPostulacion}
+                                                                            </Badge>
+                                                                        </div>
+                                                                        <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-300">
+                                                                            {/* Estos datos (Ubicación, Salario) NO están en tu PostulacionDTO,
+                                                                    son propiedades de la Vacante. Deberías obtenerlos junto con
+                                                                    la Postulación (ej. un PostulacionDetalleDTO que incluya la VacanteDTO)
+                                                                    o hacer una llamada adicional para obtener los detalles de la vacante.
+                                                                    Por ahora, son placeholders. */}
+                                                                            <div className="flex items-center">
+                                                                                <MapPin className="h-4 w-4 mr-1" />
+                                                                                Ubicación de Vacante (N/A)
+                                                                            </div>
+                                                                            <div className="flex items-center">
+                                                                                <Calendar className="h-4 w-4 mr-1" />
+                                                                                Postulado: {formatDate(postulacion.enviadoEl)}
+                                                                            </div>
+                                                                            <div className="flex items-center">
+                                                                                <DollarSign className="h-4 w-4 mr-1" />
+                                                                                Salario de Vacante (N/A)
+                                                                            </div>
+                                                                        </div>
+                                                                        {/* Mostrar observación IA si existe */}
+                                                                        {postulacion.observacionIa && (
+                                                                            <div className="mt-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-600">
+                                                                                <h4 className="font-semibold mb-1">Observación de la IA:</h4>
+                                                                                <p>{postulacion.observacionIa}</p>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                    <Button variant="outline" size="sm" className="shrink-0" asChild>
+                                                                        <Link href={`/postulante/postulacion/${postulacion.id}`}>
+                                                                            Ver detalles
+                                                                            <ChevronRight className="h-4 w-4 ml-1" />
+                                                                        </Link>
+                                                                    </Button>
                                                                 </div>
-                                                                <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-300">
-                                                                    <div className="flex items-center">
-                                                                        <MapPin className="h-4 w-4 mr-1" />
-                                                                        Yau, Perú
-                                                                    </div>
-                                                                    <div className="flex items-center">
-                                                                        <Calendar className="h-4 w-4 mr-1" />
-                                                                        Postulado: 10/01/2024
-                                                                    </div>
-                                                                    <div className="flex items-center">
-                                                                        <DollarSign className="h-4 w-4 mr-1" />
-                                                                        S/. 3,500 - S/. 4,500
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <Button variant="outline" size="sm" className="shrink-0" asChild>
-                                                                <Link href="/postulante/postulacion/1">
-                                                                    Ver detalles
-                                                                    <ChevronRight className="h-4 w-4 ml-1" />
-                                                                </Link>
-                                                            </Button>
-                                                        </div>
-                                                    </CardContent>
-                                                </Card>
-                                            </motion.div>
-
-                                            <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
-                                                <Card className="border border-gray-200 dark:border-gray-700">
-                                                    <CardContent className="p-6">
-                                                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                                            <div className="space-y-2">
-                                                                <div className="flex items-center space-x-3">
-                                                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                                                                        Contador Público
-                                                                    </h3>
-                                                                    <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                                                                        Entrevista programada
-                                                                    </Badge>
-                                                                </div>
-                                                                <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-300">
-                                                                    <div className="flex items-center">
-                                                                        <MapPin className="h-4 w-4 mr-1" />
-                                                                        Yau, Perú
-                                                                    </div>
-                                                                    <div className="flex items-center">
-                                                                        <Calendar className="h-4 w-4 mr-1" />
-                                                                        Postulado: 05/01/2024
-                                                                    </div>
-                                                                    <div className="flex items-center">
-                                                                        <DollarSign className="h-4 w-4 mr-1" />
-                                                                        S/. 4,000 - S/. 5,000
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <Button variant="outline" size="sm" className="shrink-0" asChild>
-                                                                <Link href="/postulante/postulacion/2">
-                                                                    Ver detalles
-                                                                    <ChevronRight className="h-4 w-4 ml-1" />
-                                                                </Link>
-                                                            </Button>
-                                                        </div>
-                                                    </CardContent>
-                                                </Card>
-                                            </motion.div>
-
-                                            <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
-                                                <Card className="border border-gray-200 dark:border-gray-700">
-                                                    <CardContent className="p-6">
-                                                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                                            <div className="space-y-2">
-                                                                <div className="flex items-center space-x-3">
-                                                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                                                                        Asistente Social
-                                                                    </h3>
-                                                                    <Badge className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                                                                        No seleccionado
-                                                                    </Badge>
-                                                                </div>
-                                                                <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-300">
-                                                                    <div className="flex items-center">
-                                                                        <MapPin className="h-4 w-4 mr-1" />
-                                                                        Yau, Perú
-                                                                    </div>
-                                                                    <div className="flex items-center">
-                                                                        <Calendar className="h-4 w-4 mr-1" />
-                                                                        Postulado: 20/12/2023
-                                                                    </div>
-                                                                    <div className="flex items-center">
-                                                                        <DollarSign className="h-4 w-4 mr-1" />
-                                                                        S/. 2,800 - S/. 3,500
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <Button variant="outline" size="sm" className="shrink-0" asChild>
-                                                                <Link href="/postulante/postulacion/3">
-                                                                    Ver detalles
-                                                                    <ChevronRight className="h-4 w-4 ml-1" />
-                                                                </Link>
-                                                            </Button>
-                                                        </div>
-                                                    </CardContent>
-                                                </Card>
-                                            </motion.div>
+                                                            </CardContent>
+                                                        </Card>
+                                                    </motion.div>
+                                                ))
+                                            )}
                                         </div>
                                     </TabsContent>
 
@@ -360,9 +368,11 @@ export default function CiudadanoDashboardPage() {
                                                         <p className="text-gray-600 dark:text-gray-300 mb-4">
                                                             Actualiza tu CV para mejorar tu perfil profesional.
                                                         </p>
-                                                        <Button variant="outline" className="w-full">
-                                                            Actualizar CV
-                                                        </Button>
+                                                        <Link href='/postulante/cv'>
+                                                            <Button variant="outline" className="w-full">
+                                                                Actualizar CV
+                                                            </Button>
+                                                        </Link>
                                                     </CardContent>
                                                 </Card>
                                             </motion.div>
@@ -484,6 +494,7 @@ export default function CiudadanoDashboardPage() {
                     </motion.div>
                 </div>
             </main>
+            <Toaster position="top-center" />
             <Footer />
         </div>
     );

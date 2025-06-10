@@ -1,6 +1,7 @@
 package com.redrd.back_cvs.service.postulacion;
 
 import com.redrd.back_cvs.dto.PostulacionDTO;
+import com.redrd.back_cvs.dto.UserDto;
 import com.redrd.back_cvs.model.Postulacion;
 import com.redrd.back_cvs.model.Usuario;
 import com.redrd.back_cvs.model.Vacante;
@@ -24,4 +25,5 @@ public interface IPostulacionService {
     List<Postulacion> findByVacanteId(Vacante vacanteId);
 
     PostulacionDTO converPostulacionDto(Postulacion postulacion);
+    List<PostulacionDTO> convertPostulacionDtoList(List<Postulacion> postulaciones);
 }

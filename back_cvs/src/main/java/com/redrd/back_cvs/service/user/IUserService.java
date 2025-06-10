@@ -15,6 +15,7 @@ public interface IUserService {
     Usuario accesUser(LoginRequest login);
     List<Usuario> listUsers();
     Usuario obtenerPorId(UUID id);
+    Usuario obtnerPorEmail(String email);
     Usuario updateUser(UserUpdateRequest request, UUID userId);
     void deletUser(UUID userId);
 

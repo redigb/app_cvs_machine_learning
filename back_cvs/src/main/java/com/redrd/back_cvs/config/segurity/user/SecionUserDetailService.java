@@ -18,7 +18,7 @@ public class SecionUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Usuario user = Optional.of(usuarioRepository.findByEmail(email))
+        Usuario user = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No esta registrado este usuario"));
         return SecionUserDetails.buildUserDetails(user);
     }

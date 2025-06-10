@@ -45,7 +45,10 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateTokenForUSer(authentication);
             SecionUserDetails userDetails = (SecionUserDetails) authentication.getPrincipal();
-            JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
+
+            Usuario user = userService.obtnerPorEmail(userDetails.getUsername());
+            UserDto userDto = userService.convertUserToDto(user);
+            JwtResponse jwtResponse = new JwtResponse(jwt, userDto);
             return ResponseEntity.ok(new ApiResponse("Inicio de secion exitoso.", jwtResponse));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(UNAUTHORIZED).body(new ApiResponse(e.getMessage(), null));

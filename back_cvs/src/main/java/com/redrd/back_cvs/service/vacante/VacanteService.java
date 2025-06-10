@@ -20,7 +20,7 @@ public class VacanteService implements IVacanteService {
 
     @Override
     public List<Vacante> findAll() {
-        return vacanteRepository.findAll();
+        return vacanteRepository.findAllWithRequisitos();
     }
 
     @Override

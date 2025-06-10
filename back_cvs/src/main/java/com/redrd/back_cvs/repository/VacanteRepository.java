@@ -16,4 +16,7 @@ public interface VacanteRepository extends JpaRepository<Vacante, UUID> {
 
     @Query("SELECT v FROM Vacante v JOIN FETCH v.requisitos WHERE v.id = :id")
     Optional<Vacante> findByIdFetchRequisitos(@Param("id") UUID id);
+
+    @Query("SELECT v FROM Vacante v LEFT JOIN FETCH v.requisitos")
+    List<Vacante> findAllWithRequisitos();
 }

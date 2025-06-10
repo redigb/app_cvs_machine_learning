@@ -11,6 +11,7 @@ import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 
 // consumo-api
+import { useAuthStore } from "@/service/store/auth"
 import { useGlobalStore } from "@/service/store/GlobalState"
 import { Vacante } from "./types/Vacantes"
 
@@ -22,6 +23,7 @@ export function VacantesGrid({ vacantesData }: VacantesGridProps) {
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedArea, setSelectedArea] = useState("all")
+  const isAuth = useAuthStore((state) => state.isAuth);
   const router = useRouter()
 
   // Filtrar vacantes por búsqueda y área
@@ -48,8 +50,8 @@ export function VacantesGrid({ vacantesData }: VacantesGridProps) {
 
   const setSelectedVacanteId = useGlobalStore((state) => state.setSelectedVacanteId);
   const handlePostular = (IdVacante: string) => {
-    setSelectedVacanteId(IdVacante);
-    // almacenar la vacante - selecionada solo ID
+    if (isAuth) { return router.replace(`/postulante/${IdVacante}`); }
+    setSelectedVacanteId(IdVacante); // almacenar la vacante - selecionada solo ID
     router.push("/login")
   }
 
